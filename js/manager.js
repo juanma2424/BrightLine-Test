@@ -1,7 +1,8 @@
 let channels_list;
 let current_channel = 0;
 let last_channel = 0;
-let Full_Screen = false;
+let is_full_screen = false;
+let is_play = false;
 let is_mute = true;
 const outsideCard = "rgba(22, 31, 21, 0.685)";
 const insideCard = "rgba(190, 198, 189, 0.791)";
@@ -58,9 +59,15 @@ window.onload = async () => {
         channels_list !== undefined ? loadBanner(channels_list.streams) : alert("ERROR: 404 Not Found")
 };
 
-const home = () => {
-    if(Full_Screen){
-        Full_Screen = false
+const basicMode = () =>{
+    is_play = false;
+    is_mute = true;
+}
+
+const endVideo = () => {
+    basicMode()
+    if(is_full_screen){
+        is_full_screen = false
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -72,7 +79,8 @@ const home = () => {
 }
 
 const fullScreen = (video) => {
-    Full_Screen = true
+    is_full_screen = true
+    is_play = true;
     if (video.requestFullscreen) {
         video.requestFullscreen();
     } else if (video.webkitRequestFullscreen) {
@@ -82,8 +90,8 @@ const fullScreen = (video) => {
     }
 }
 
-const loadBanner = (pData) => {
-    pData.forEach(function (channel, i) {
+const loadBanner = (pChannelData) => {
+    pChannelData.forEach(function (channel, i) {
         if(channel.hasOwnProperty('name') && channel.hasOwnProperty('mediaFile')){
             let test_video = document.createElement('video');
             test_video.src = channel.mediaFile;
@@ -102,8 +110,8 @@ const loadBanner = (pData) => {
                 video_preview.classList = 'miniature-video'
 
                 if(document.getElementById("preview-channels").childNodes.length == 0){
-                    document.getElementById('preview-player').addEventListener('ended', home, false);
-                    document.getElementById('preview-player').src = channel.mediaFile;
+                    document.getElementById('tv').addEventListener('ended', endVideo, false);
+                    document.getElementById('tv').src = channel.mediaFile;
                     document.getElementById('tv-label').innerHTML = channel.name;
                     video_box.style.backgroundColor = insideCard;
                 }
@@ -111,51 +119,53 @@ const loadBanner = (pData) => {
                 video_box.appendChild(video_preview)
                 video_box.appendChild(video_label)
                 document.getElementById("preview-channels").appendChild(video_box);
-               
-                
             }
         }
     });
 }
 
-const switchCards =(pData)=>{
-    var elem = document.getElementById("preview-channels").childNodes[pData];
-    if(pData == current_channel){
-        elem.style.backgroundColor =insideCard;
-        elem.scrollIntoView();
-        document.getElementById('tv-label').innerHTML =channels_list.streams[elem.id].name;
-        document.getElementById('preview-player').src = channels_list.streams[elem.id].mediaFile;
+const switchCards =(pIndexData)=>{
+    var card = document.getElementById("preview-channels").childNodes[pIndexData];
+    if(pIndexData == current_channel){
+        card.style.backgroundColor =insideCard;
+        card.scrollIntoView();
+        document.getElementById('tv-label').innerHTML =channels_list.streams[card.id].name;
+        document.getElementById('tv').src = channels_list.streams[card.id].mediaFile;
     }else{
-        elem.style.backgroundColor =outsideCard;
-        elem.scrollIntoView();
+        card.style.backgroundColor =outsideCard;
+        card.scrollIntoView();
         last_channel= current_channel
     }
 }
 
 const changeChannel = () => {
+    basicMode()
     switchCards(current_channel)
     switchCards(last_channel)
 }
 
 document.addEventListener('keydown', (event) => {
     var code = event.code;
-    const tv = document.getElementById('preview-player');
+    const tv = document.getElementById('tv');
     const maxChannleNum = document.getElementById("preview-channels").childNodes.length
+    console.log("===>", code)
     switch (code) {
-        case "KeyW":
-            tv.muted = true;
+        case "ArrowUp":
+            is_play = true;
+            tv.muted = false;
             tv.play()
             break;
-        case "KeyS":
+        case "ArrowDown":
             tv.pause()
+            basicMode()
             break;
-        case "KeyD":
+        case "ArrowRight":
             if(current_channel+1 < maxChannleNum){
                 current_channel++
                 changeChannel()
             }
             break;
-        case "KeyA":
+        case "ArrowLeft":
             if(current_channel-1 >= 0){
                 current_channel--
                 changeChannel()
@@ -167,8 +177,11 @@ document.addEventListener('keydown', (event) => {
             tv.play()
             break;
         case "KeyM":
-            tv.muted = is_mute;
-            is_mute = !is_mute
+            if(is_play){
+                tv.muted = is_mute;
+                is_mute = !is_mute;
+            }
             break;
     }
   }, false);
+
