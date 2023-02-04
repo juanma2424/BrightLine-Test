@@ -1,6 +1,15 @@
-body {
-  font-family: Arial;
+html {
+  height: 100vh;
+}
+
+body {/* For browsers that do not support gradients */
+  background-image: linear-gradient(to right top, #a200dd, #8d2bb8, #793994, #634071, #4c434f);
+  min-height: 100%;
   margin: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Oswald', sans-serif;
+  font-family: 'Raleway', sans-serif;
+  font-family: 'Roboto Mono', monospace;
 }
 
 * {
@@ -9,6 +18,74 @@ body {
 
 img {
   vertical-align: middle;
+}
+
+.font-style-controller {
+  color: white;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.font-style-button {
+  color: white;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+.body-container{
+  background: rgba(255, 255, 255, 0);
+  padding-top: 10px;
+  padding-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+}
+
+.body-card{
+  background: rgb(71, 64, 64);
+  border-radius: 5% 5% 5% 5%;
+  width:800px;
+  height:430px;
+  margin: 5px;
+}
+
+.body-card-tv{
+  width:800px;
+  height:420px;
+  margin: 5px;
+}
+
+
+.body-tv{
+  background-color:rgba(22, 31, 21, 0.685);
+  border-radius: 5% 5% 5% 5%;
+  padding: 30px;
+}
+
+.indications-controller{
+  background-color: white;
+  border-radius: 5% 5% 5% 5%;
+  color: black;
+  height: 120px;
+  line-height: 120px;
+  margin: 5px;
+}
+
+.tv{
+  width:640px; 
+  height:360px;
+  background-color: rgb(0, 0, 0);
+  color: black;
+}
+
+.tv-label{
+  background-color: rgb(0, 0, 0);
+  display: flex;
+  color: white;
+  overflow:hidden;
 }
 
 .video-card{
@@ -27,7 +104,6 @@ img {
 }
 
 .video-label{
-  background-color: rgb(0, 0, 0);
   display: flex;
   color: white;
   max-width: 215px;
@@ -47,8 +123,7 @@ img {
   padding-bottom: 90px;
 }
 
-.flex-banner-container{
-  background: rgb(0, 0, 0);
+.banner-container{
   padding-top: 10px;
   padding-bottom: 15px;
   padding-left: 15px;
@@ -56,7 +131,7 @@ img {
   display: flex;
 }
 
-.flex-container{
+.video-card-container{
   background: rgb(71, 64, 64);
   padding: 5px;
   display: flex;
