@@ -1,0 +1,73 @@
+body {
+  font-family: Arial;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  vertical-align: middle;
+}
+
+.video-card{
+  background-color:rgba(22, 31, 21, 0.685);
+  border-radius: 5% 5% 5% 5%;
+  margin: 5px;
+}
+
+.miniature-video{
+  background-color: white;
+  border-radius: 5% 5% 5% 5%;
+  color: black;
+  height: 120px;
+  line-height: 120px;
+  margin: 5px;
+}
+
+.video-label{
+  background-color: rgb(0, 0, 0);
+  display: flex;
+  color: white;
+  max-width: 215px;
+  overflow:hidden;
+  padding: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.arrow{
+  width:50px; 
+  height:215px; 
+  background: rgb(43, 43, 45);
+  border-radius: 0% 200% 200% 0%;
+  padding-top: 90px;
+  padding-bottom: 90px;
+}
+
+.flex-banner-container{
+  background: rgb(0, 0, 0);
+  padding-top: 10px;
+  padding-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+}
+
+.flex-container{
+  background: rgb(71, 64, 64);
+  padding: 5px;
+  display: flex;
+  overflow-x: scroll;
+}
+
+.hide-element {
+    display: none;
+}
+
+.preview-channels {
+    background-color:#222;
+    width: 100%;
+}
