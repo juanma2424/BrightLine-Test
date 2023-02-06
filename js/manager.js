@@ -13,51 +13,61 @@ window.onload = async () => {
         .then((json) => {
             channels_list = json;
         });
-//         channels_list = { "streams": [ 
-//             {
-//                 "name": "Scrollable Carousel - Vizzy",
-//                 "mediaFile": "https://3860af3e8e3fbfdb.mediapackage.us-east-2.amazonaws.com/out/v1/791e60d1176b4746aabf4e580a1c0611/index.m3u8"
-//             },
-//             { "name": "Scrollable Carousel - BMW Mini1",
-//                                  "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                                 },
-//                                 { "name": "Scrollable Carousel - BMW Mini2",
-//                                  "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                                 },
-//                                 { "name": "Scrollable Carousel - BMW Mini3",
-//                                  "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                                 },
-//                                 { "name": "Scrollable Carousel - BMW Mini4",
-//                                 "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                                },
-//                                { "name": "Scrollable Carousel - BMW Mini5",
-//                                "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                               },
-//                               { "name": "Scrollable Carousel - BMW Mini6",
-//                               "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                              },
-//                              { "name": "Scrollable Carousel - BMW Mini7",
-//                              "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                             },
-//                             { "name": "Scrollable Carousel - BMW Mini8",
-//                             "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                            },
-//                            { "name": "Scrollable Carousel - BMW Mini9",
-//                            "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                           },
-//                           { "name": "Scrollable Carousel - BMW Mini10",
-//                           "mediaFile": "https://cdn-media.brightline.tv/demo/ces2023/creatives/isso_mini/media/videos/01_hulu_brightline_south_december_video_windowed_bl720.mp4"
-//                          },
-
-                               
-//                                 {
-//                                     "name": "Scrollable Carousel - Vizzy",
-//                                     "mediaFile": "https://3860af3e8e3fbfdb.mediapackage.us-east-2.amazonaws.com/out/v1/791e60d1176b4746aabf4e580a1c0611/index.m3u8"
-//                                 }
-//                             ]
-//   }
-        channels_list !== undefined ? loadBanner(channels_list.streams) : alert("ERROR: 404 Not Found")
+        channels_list !== undefined ? loadScrollArea(channels_list.streams) : alert("ERROR: 404 Not Found");
 };
+
+const loadScrollArea = (pChannelData) => {
+    pChannelData.forEach(function (channel, i) {
+        if(channel.hasOwnProperty('name') && channel.hasOwnProperty('mediaFile')){
+            let test_video = document.createElement('video');
+            test_video.src = channel.mediaFile;
+            test_video.oncanplay = () => {
+
+                let video_box = document.createElement("div");
+                video_box.id = i;
+                video_box.classList = 'video-card';
+
+                let video_label = document.createElement('label');
+                video_label.innerHTML = channel.name;
+                video_label.classList = 'video-label';
+
+                let video_preview = document.createElement("video");
+                video_preview.src = channel.mediaFile;
+                video_preview.classList = 'miniature-video';
+
+                if(document.getElementById("preview-channels").childNodes.length == 0){
+                    document.getElementById('tv').addEventListener('ended', endVideo, false);
+                    document.getElementById('tv').src = channel.mediaFile;
+                    document.getElementById('tv-label').innerHTML = channel.name;
+                    video_box.style.backgroundColor = insideCard;
+                }
+
+                video_box.appendChild(video_preview);
+                video_box.appendChild(video_label);
+                document.getElementById("preview-channels").appendChild(video_box);
+            }
+        }
+    });
+}
+
+const changeChannel = () => {
+    basicMode();
+    switchCards(current_channel);
+    switchCards(last_channel);
+}
+
+const switchCards =(pIndexData)=>{
+    var card = document.getElementById("preview-channels").childNodes[pIndexData];
+    if(pIndexData == current_channel){
+        card.style.backgroundColor = insideCard;
+        card.scrollIntoView();
+        document.getElementById('tv-label').innerHTML =channels_list.streams[card.id].name;
+        document.getElementById('tv').src = channels_list.streams[card.id].mediaFile;
+    }else{
+        card.style.backgroundColor = outsideCard;
+        last_channel= current_channel;
+    }
+}
 
 const basicMode = () =>{
     is_play = false;
@@ -65,9 +75,9 @@ const basicMode = () =>{
 }
 
 const endVideo = () => {
-    basicMode()
+    basicMode();
     if(is_full_screen){
-        is_full_screen = false
+        is_full_screen = false;
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -79,7 +89,7 @@ const endVideo = () => {
 }
 
 const fullScreen = (video) => {
-    is_full_screen = true
+    is_full_screen = true;
     is_play = true;
     if (video.requestFullscreen) {
         video.requestFullscreen();
@@ -90,98 +100,66 @@ const fullScreen = (video) => {
     }
 }
 
-const loadBanner = (pChannelData) => {
-    pChannelData.forEach(function (channel, i) {
-        if(channel.hasOwnProperty('name') && channel.hasOwnProperty('mediaFile')){
-            let test_video = document.createElement('video');
-            test_video.src = channel.mediaFile;
-            test_video.oncanplay = () => {
-
-                let video_box = document.createElement("div");
-                video_box.id = i;
-                video_box.classList = 'video-card'
-
-                let video_label = document.createElement('label');
-                video_label.innerHTML = channel.name;  
-                video_label.classList = 'video-label'
-
-                let video_preview = document.createElement("video");
-                video_preview.src = channel.mediaFile;
-                video_preview.classList = 'miniature-video'
-
-                if(document.getElementById("preview-channels").childNodes.length == 0){
-                    document.getElementById('tv').addEventListener('ended', endVideo, false);
-                    document.getElementById('tv').src = channel.mediaFile;
-                    document.getElementById('tv-label').innerHTML = channel.name;
-                    video_box.style.backgroundColor = insideCard;
-                }
-
-                video_box.appendChild(video_preview)
-                video_box.appendChild(video_label)
-                document.getElementById("preview-channels").appendChild(video_box);
-            }
+const exitFullscreen = () => {
+    if(is_full_screen){
+        is_full_screen = false;
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
         }
-    });
-}
-
-const switchCards =(pIndexData)=>{
-    var card = document.getElementById("preview-channels").childNodes[pIndexData];
-    if(pIndexData == current_channel){
-        card.style.backgroundColor =insideCard;
-        card.scrollIntoView();
-        document.getElementById('tv-label').innerHTML =channels_list.streams[card.id].name;
-        document.getElementById('tv').src = channels_list.streams[card.id].mediaFile;
-    }else{
-        card.style.backgroundColor =outsideCard;
-        card.scrollIntoView();
-        last_channel= current_channel
     }
 }
 
-const changeChannel = () => {
-    basicMode()
-    switchCards(current_channel)
-    switchCards(last_channel)
-}
-
 document.addEventListener('keydown', (event) => {
-    var code = event.code;
     const tv = document.getElementById('tv');
-    const maxChannleNum = document.getElementById("preview-channels").childNodes.length
-    console.log("===>", code)
-    switch (code) {
-        case "ArrowUp":
+    const maxChannelNum = document.getElementById("preview-channels").childNodes.length;
+    if(maxChannelNum == 0) {
+        event.preventDefault();
+        return;
+    }
+    switch (event.keyCode) {
+        case 8://Backspace
+            exitFullscreen();
+            break;
+        case 38://ArrowUp
             is_play = true;
             tv.muted = false;
-            tv.play()
+            tv.play();
             break;
-        case "ArrowDown":
-            tv.pause()
-            basicMode()
+        case 40://ArrowDown
+            tv.pause();
+            basicMode();
             break;
-        case "ArrowRight":
-            if(current_channel+1 < maxChannleNum){
-                current_channel++
-                changeChannel()
+        case 39://ArrowRight
+            if(current_channel+1 < maxChannelNum){
+                current_channel++;
+                changeChannel();
             }
             break;
-        case "ArrowLeft":
+        case 37://ArrowLeft
             if(current_channel-1 >= 0){
-                current_channel--
-                changeChannel()
+                current_channel--;
+                changeChannel();
             }
             break;
-        case "Enter":
-            tv.muted = false;
-            fullScreen(tv)
-            tv.play()
+        case 13://Enter
+            if(!is_full_screen){
+                tv.muted = false;
+                fullScreen(tv);
+                tv.play();
+            }
             break;
-        case "KeyM":
+        case 77://KeyM
             if(is_play){
                 tv.muted = is_mute;
                 is_mute = !is_mute;
             }
             break;
+        default:
+            event.preventDefault();
     }
-  }, false);
+}, false);
 
